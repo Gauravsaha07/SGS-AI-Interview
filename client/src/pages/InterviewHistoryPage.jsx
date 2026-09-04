@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { History, ChevronDown, ChevronUp, Trophy, Calendar, Briefcase, Award, Sparkles, MessageSquare } from "lucide-react";
+import { History, ChevronDown, ChevronUp, Trophy, Calendar, Briefcase, Award, Sparkles, MessageSquare, CheckCircle2, AlertCircle } from "lucide-react";
 
 const InterviewHistoryPage = () => {
   const [history, setHistory] = useState([]);
@@ -54,7 +54,7 @@ const InterviewHistoryPage = () => {
         </div>
 
         <div className="text-xs font-semibold text-slate-400 bg-slate-900 px-4 py-2 rounded-xl border border-slate-800">
-          Total Completed Sessions: <span className="text-indigo-400 font-bold">{history.length}</span>
+          Total Recorded Sessions: <span className="text-indigo-400 font-bold">{history.length}</span>
         </div>
       </div>
 
@@ -72,6 +72,7 @@ const InterviewHistoryPage = () => {
         <div className="space-y-4">
           {history.map((item) => {
             const isExpanded = selectedInterview?._id === item._id;
+            const isCompleted = item.status === "completed";
 
             return (
               <div
@@ -90,8 +91,17 @@ const InterviewHistoryPage = () => {
                       <span className="text-slate-600">&bull;</span>
                       <span className="text-slate-400">{item.interviewType}</span>
                     </div>
-                    <h3 className="text-lg font-bold text-white">
-                      {item.jobTitle}
+                    <h3 className="text-lg font-bold text-white flex items-center gap-3">
+                      <span>{item.jobTitle}</span>
+                      {isCompleted ? (
+                        <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/10 text-emerald-400 font-bold border border-emerald-500/20 text-[10px] inline-flex items-center gap-1">
+                          <CheckCircle2 className="w-3 h-3" /> Completed
+                        </span>
+                      ) : (
+                        <span className="px-2.5 py-0.5 rounded-full bg-amber-500/10 text-amber-300 font-bold border border-amber-500/20 text-[10px] inline-flex items-center gap-1">
+                          <AlertCircle className="w-3 h-3" /> Incomplete
+                        </span>
+                      )}
                     </h3>
                     <div className="flex items-center gap-3 text-xs text-slate-400">
                       <span>Exp: {item.experienceLevel}</span>
@@ -108,8 +118,8 @@ const InterviewHistoryPage = () => {
                   <div className="flex items-center gap-4 self-end sm:self-center">
                     <div className="text-right">
                       <div className="text-[10px] uppercase tracking-wider text-slate-400 font-semibold">Overall Score</div>
-                      <div className="text-xl font-extrabold text-emerald-400">
-                        {item.overallScore} / 100
+                      <div className={`text-xl font-extrabold ${isCompleted ? "text-emerald-400" : "text-amber-400"}`}>
+                        {isCompleted ? item.overallScore : 0} / 100
                       </div>
                     </div>
                     <div className="w-9 h-9 rounded-xl bg-slate-800 flex items-center justify-center text-slate-400">
@@ -125,69 +135,84 @@ const InterviewHistoryPage = () => {
                     {/* Top Overall Score Banner */}
                     <div className="p-4 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex flex-col sm:flex-row items-center justify-between gap-4">
                       <div>
-                        <div className="text-xs font-bold text-indigo-300 uppercase tracking-wider">Interview Session Transcript</div>
+                        <div className="text-xs font-bold text-indigo-300 uppercase tracking-wider flex items-center gap-2">
+                          <span>Interview Session Transcript</span>
+                          {!isCompleted && (
+                            <span className="px-2 py-0.5 rounded bg-amber-500/20 text-amber-300 text-[10px] border border-amber-500/30">
+                              Session Incomplete / Abandoned
+                            </span>
+                          )}
+                        </div>
                         <p className="text-xs text-slate-300 mt-1">{selectedInterview.overallFeedback}</p>
                       </div>
-                      <div className="px-4 py-2 rounded-xl bg-emerald-500/20 text-emerald-300 font-black text-lg border border-emerald-500/30 shrink-0">
-                        Overall Score: {selectedInterview.overallScore} / 100
+                      <div className={`px-4 py-2 rounded-xl font-black text-lg border shrink-0 ${
+                        isCompleted ? "bg-emerald-500/20 text-emerald-300 border-emerald-500/30" : "bg-amber-500/20 text-amber-300 border-amber-500/30"
+                      }`}>
+                        Overall Score: {isCompleted ? selectedInterview.overallScore : 0} / 100
                       </div>
                     </div>
 
-                    {/* Word-for-Word Transcript Format */}
-                    <div className="space-y-8 font-mono text-xs">
-                      {selectedInterview.questions.map((q, idx) => {
-                        const num = String(idx + 1).padStart(2, "0");
+                    {/* Word-for-Word Transcript Format (ONLY Asked & Answered Questions) */}
+                    {selectedInterview.questions.length === 0 ? (
+                      <div className="p-6 text-center text-slate-400 text-xs italic bg-slate-900 rounded-2xl border border-slate-800">
+                        No questions were answered during this session.
+                      </div>
+                    ) : (
+                      <div className="space-y-8 font-mono text-xs">
+                        {selectedInterview.questions.map((q, idx) => {
+                          const num = String(idx + 1).padStart(2, "0");
 
-                        return (
-                          <div key={idx} className="p-6 rounded-2xl bg-slate-900 border border-slate-800 space-y-4">
-                            
-                            {/* AI Generated Question XX */}
-                            <div className="space-y-1">
-                              <div className="text-indigo-400 font-bold uppercase tracking-wider">
-                                AI Generated Question {num}:
+                          return (
+                            <div key={idx} className="p-6 rounded-2xl bg-slate-900 border border-slate-800 space-y-4">
+                              
+                              {/* AI Generated Question XX */}
+                              <div className="space-y-1">
+                                <div className="text-indigo-400 font-bold uppercase tracking-wider">
+                                  AI Generated Question {num}:
+                                </div>
+                                <div className="text-slate-100 text-sm font-sans font-medium pl-3 border-l-2 border-indigo-500">
+                                  {q.question}
+                                </div>
                               </div>
-                              <div className="text-slate-100 text-sm font-sans font-medium pl-3 border-l-2 border-indigo-500">
-                                {q.question}
-                              </div>
-                            </div>
 
-                            {/* Candidate Answer XX */}
-                            <div className="space-y-1">
-                              <div className="text-cyan-400 font-bold uppercase tracking-wider">
-                                Candidate Answer {num}:
+                              {/* Candidate Answer XX */}
+                              <div className="space-y-1">
+                                <div className="text-cyan-400 font-bold uppercase tracking-wider">
+                                  Candidate Answer {num}:
+                                </div>
+                                <div className="text-slate-300 text-sm font-sans pl-3 border-l-2 border-cyan-500 bg-slate-950/60 p-3 rounded-r-xl">
+                                  {q.candidateAnswer || "(No answer recorded)"}
+                                </div>
                               </div>
-                              <div className="text-slate-300 text-sm font-sans pl-3 border-l-2 border-cyan-500 bg-slate-950/60 p-3 rounded-r-xl">
-                                {q.candidateAnswer || "(No answer recorded)"}
-                              </div>
-                            </div>
 
-                            {/* AI Review on Candidate Answer XX */}
-                            <div className="space-y-2">
-                              <div className="text-amber-400 font-bold uppercase tracking-wider">
-                                AI Review on Candidate Answer {num}:
-                              </div>
-                              <div className="space-y-2 font-sans text-xs bg-slate-950/90 p-4 rounded-xl border border-slate-800">
-                                <div className="text-emerald-400 font-semibold">
-                                  <strong>Strengths:</strong> {q.aiReview?.strengths || "Good clear response."}
+                              {/* AI Review on Candidate Answer XX */}
+                              <div className="space-y-2">
+                                <div className="text-amber-400 font-bold uppercase tracking-wider">
+                                  AI Review on Candidate Answer {num}:
                                 </div>
-                                <div className="text-amber-300 font-semibold">
-                                  <strong>Missing Points:</strong> {q.aiReview?.missing || "Could elaborate with deeper technical metrics."}
-                                </div>
-                                <div className="text-indigo-300 font-semibold">
-                                  <strong>Better Way to Answer:</strong> {q.aiReview?.betterAnswer || "Structure response using STAR format."}
-                                </div>
-                                {q.aiReview?.score > 0 && (
-                                  <div className="text-slate-400 pt-1 border-t border-slate-800 font-mono">
-                                    Question Score: <strong className="text-white">{q.aiReview.score}/100</strong>
+                                <div className="space-y-2 font-sans text-xs bg-slate-950/90 p-4 rounded-xl border border-slate-800">
+                                  <div className="text-emerald-400 font-semibold">
+                                    <strong>Strengths:</strong> {q.aiReview?.strengths || "Good clear response."}
                                   </div>
-                                )}
+                                  <div className="text-amber-300 font-semibold">
+                                    <strong>Missing Points:</strong> {q.aiReview?.missing || "Could elaborate with deeper technical metrics."}
+                                  </div>
+                                  <div className="text-indigo-300 font-semibold">
+                                    <strong>Better Way to Answer:</strong> {q.aiReview?.betterAnswer || "Structure response using STAR format."}
+                                  </div>
+                                  {q.aiReview?.score > 0 && (
+                                    <div className="text-slate-400 pt-1 border-t border-slate-800 font-mono">
+                                      Question Score: <strong className="text-white">{q.aiReview.score}/100</strong>
+                                    </div>
+                                  )}
+                                </div>
                               </div>
-                            </div>
 
-                          </div>
-                        );
-                      })}
-                    </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
 
                   </div>
                 )}

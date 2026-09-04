@@ -105,8 +105,8 @@ const CandidateDashboard = () => {
             {/* Stats Card */}
             <div className="p-6 rounded-3xl bg-slate-900/60 border border-slate-800 flex items-center justify-between">
               <div className="space-y-1">
-                <div className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Total Completed</div>
-                <div className="text-3xl font-extrabold text-white">{historyCount} Interview(s) Given</div>
+                <div className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Total Sessions</div>
+                <div className="text-3xl font-extrabold text-white">{historyCount} Session(s) Recorded</div>
               </div>
               <div className="flex items-center gap-3">
                 <Link
@@ -161,27 +161,35 @@ const CandidateDashboard = () => {
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                {recentInterviews.map((inv) => (
-                  <Link
-                    key={inv._id}
-                    to="/history"
-                    className="p-4 rounded-2xl bg-slate-950/60 border border-slate-800/80 hover:border-indigo-500/40 transition-all block group"
-                  >
-                    <div className="flex items-center justify-between text-xs text-slate-400 mb-2">
-                      <span className="font-semibold text-indigo-400">{inv.jobField}</span>
-                      <span>{new Date(inv.createdAt).toLocaleDateString()}</span>
-                    </div>
-                    <div className="text-sm font-bold text-white group-hover:text-indigo-300 transition-colors mb-2">
-                      {inv.jobTitle}
-                    </div>
-                    <div className="flex items-center justify-between text-xs">
-                      <span className="text-slate-400">{inv.experienceLevel} &bull; {inv.difficulty}</span>
-                      <span className="px-2 py-0.5 rounded-lg bg-emerald-500/10 text-emerald-400 font-extrabold border border-emerald-500/20">
-                        {inv.overallScore}/100
-                      </span>
-                    </div>
-                  </Link>
-                ))}
+                {recentInterviews.map((inv) => {
+                  const isCompleted = inv.status === "completed";
+
+                  return (
+                    <Link
+                      key={inv._id}
+                      to="/history"
+                      className="p-4 rounded-2xl bg-slate-950/60 border border-slate-800/80 hover:border-indigo-500/40 transition-all block group"
+                    >
+                      <div className="flex items-center justify-between text-xs text-slate-400 mb-2">
+                        <span className="font-semibold text-indigo-400">{inv.jobField}</span>
+                        <span>{new Date(inv.createdAt).toLocaleDateString()}</span>
+                      </div>
+                      <div className="text-sm font-bold text-white group-hover:text-indigo-300 transition-colors mb-2">
+                        {inv.jobTitle}
+                      </div>
+                      <div className="flex items-center justify-between text-xs">
+                        <span className="text-slate-400">{inv.experienceLevel} &bull; {inv.difficulty}</span>
+                        <span className={`px-2 py-0.5 rounded-lg font-extrabold border ${
+                          isCompleted
+                            ? "bg-emerald-500/10 text-emerald-400 border-emerald-500/20"
+                            : "bg-amber-500/10 text-amber-300 border-amber-500/20"
+                        }`}>
+                          {isCompleted ? `${inv.overallScore}/100` : "0/100"}
+                        </span>
+                      </div>
+                    </Link>
+                  );
+                })}
               </div>
             </div>
           )}
