@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import axios from "axios";
+import { API_URL } from "../config/api";
 import { Play, History, Coins, Sparkles, Trophy, Award, ArrowRight, UserCheck, ShieldAlert, CreditCard } from "lucide-react";
 
 const CandidateDashboard = () => {
@@ -14,7 +15,7 @@ const CandidateDashboard = () => {
   useEffect(() => {
     const fetchHistory = async () => {
       try {
-        const res = await axios.get("http://localhost:5511/api/interviews/history");
+        const res = await axios.get(`${API_URL}/interviews/history`);
         setHistoryCount(res.data.count || 0);
         setRecentInterviews((res.data.history || []).slice(0, 3));
       } catch (err) {

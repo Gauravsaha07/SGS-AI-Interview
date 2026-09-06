@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { API_URL } from "../config/api";
 import { Coins, Check, Sparkles, ShoppingBag, ArrowRight, ShieldCheck, Zap } from "lucide-react";
 
 const BuyCreditsPage = () => {
@@ -14,7 +15,7 @@ const BuyCreditsPage = () => {
   useEffect(() => {
     const fetchPackages = async () => {
       try {
-        const res = await axios.get("http://localhost:5511/api/credits/packages");
+        const res = await axios.get(`${API_URL}/credits/packages`);
         setPackages(res.data.packages || []);
       } catch (err) {
         console.error("Fetch credit packages error:", err);
@@ -28,7 +29,7 @@ const BuyCreditsPage = () => {
   const handleBuy = async (pkgId) => {
     setSubmittingPkgId(pkgId);
     try {
-      const res = await axios.post("http://localhost:5511/api/credits/request", {
+      const res = await axios.post(`${API_URL}/credits/request`, {
         packageId: pkgId,
       });
 

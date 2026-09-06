@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import { Link } from "react-router-dom";
 import axios from "axios";
 import { useSocket } from "../context/SocketContext";
+import { API_URL } from "../config/api";
 import { ShieldCheck, Users, Award, ShoppingBag, CheckCircle2, XCircle, Clock, MessageSquare, Bot, QrCode, Send, FileText, X, AlertCircle, Lock, Upload } from "lucide-react";
 
 const AdminDashboard = () => {
@@ -30,8 +31,8 @@ const AdminDashboard = () => {
   const fetchAdminData = async () => {
     try {
       const [statsRes, reqsRes] = await Promise.all([
-        axios.get("http://localhost:5511/api/admin/stats"),
-        axios.get(`http://localhost:5511/api/admin/credit-requests?status=${filterStatus === "all" ? "" : filterStatus}`),
+        axios.get(`${API_URL}/admin/stats`),
+        axios.get(`${API_URL}/admin/credit-requests?status=${filterStatus === "all" ? "" : filterStatus}`),
       ]);
       setStats(statsRes.data.stats);
       setCreditRequests(reqsRes.data.creditRequests || []);
@@ -116,7 +117,7 @@ const AdminDashboard = () => {
     setSendingMessage(true);
     try {
       await axios.post(
-        `http://localhost:5511/api/admin/credit-requests/${activeChatRequest._id}/message`,
+        `${API_URL}/admin/credit-requests/${activeChatRequest._id}/message`,
         {
           text: imagePayload ? "Payment QR Code uploaded by Admin. Please scan to complete payment:" : adminReplyText.trim(),
           image: imagePayload || "",
@@ -159,7 +160,7 @@ const AdminDashboard = () => {
     setStatusUpdating(true);
     try {
       await axios.post(
-        `http://localhost:5511/api/admin/credit-requests/${reqId}/status`,
+        `${API_URL}/admin/credit-requests/${reqId}/status`,
         { status }
       );
 
@@ -193,7 +194,7 @@ const AdminDashboard = () => {
 
     setStatusUpdating(true);
     try {
-      await axios.post(`http://localhost:5511/api/admin/credit-requests/${activeChatRequest._id}/close`);
+      await axios.post(`${API_URL}/admin/credit-requests/${activeChatRequest._id}/close`);
       alert("Chat thread has been disabled.");
       fetchAdminData();
     } catch (err) {
@@ -206,7 +207,7 @@ const AdminDashboard = () => {
 
   const handleViewCandidateInterviews = async (userId) => {
     try {
-      const res = await axios.get(`http://localhost:5511/api/admin/users/${userId}/interviews`);
+      const res = await axios.get(`${API_URL}/admin/users/${userId}/interviews`);
       setCandidateInterviewsModal(res.data);
     } catch (err) {
       console.error("Fetch candidate interviews error:", err);

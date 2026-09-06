@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import axios from "axios";
+import { API_URL } from "../config/api";
 import VoiceInput from "../components/VoiceInput";
 import { Sparkles, Send, CheckCircle2, ArrowRight, Trophy, AlertCircle, Award, Lightbulb, MessageSquareQuote, Check } from "lucide-react";
 
@@ -24,7 +25,7 @@ const InterviewSessionPage = () => {
   useEffect(() => {
     const fetchInterview = async () => {
       try {
-        const res = await axios.get(`http://localhost:5511/api/interviews/${id}`);
+        const res = await axios.get(`${API_URL}/interviews/${id}`);
         const inv = res.data.interview;
         setInterview(inv);
         setCurrentQuestionIndex(inv.currentQuestionIndex || 0);
@@ -56,7 +57,7 @@ const InterviewSessionPage = () => {
     setError("");
 
     try {
-      const res = await axios.post(`http://localhost:5511/api/interviews/${id}/answer`, {
+      const res = await axios.post(`${API_URL}/interviews/${id}/answer`, {
         questionIndex: currentQuestionIndex,
         answerText: answerText.trim(),
       });

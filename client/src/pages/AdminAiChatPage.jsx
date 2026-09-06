@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from "react";
 import axios from "axios";
+import { API_URL } from "../config/api";
 import { Bot, Send, Sparkles, User, Database, RefreshCw } from "lucide-react";
 
 const AdminAiChatPage = () => {
@@ -29,7 +30,7 @@ const AdminAiChatPage = () => {
     setLoading(true);
 
     try {
-      const res = await axios.post("http://localhost:5511/api/admin/chat", {
+      const res = await axios.post(`${API_URL}/admin/chat`, {
         prompt: userMsg,
       });
 

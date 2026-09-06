@@ -1,10 +1,11 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { io } from "socket.io-client";
 import { useAuth } from "./AuthContext";
+import { API_BASE_URL } from "../config/api";
 
 const SocketContext = createContext();
 
-const SOCKET_SERVER_URL = "http://localhost:5511";
+const SOCKET_SERVER_URL = API_BASE_URL;
 
 export const SocketProvider = ({ children }) => {
   const [socket, setSocket] = useState(null);

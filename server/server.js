@@ -17,20 +17,25 @@ const PORT = process.env.PORT || 5511;
 const app = express();
 const server = http.createServer(app);
 
+// CORS Configuration
+const clientOrigin = process.env.CLIENT_URL || "http://localhost:5173";
+const corsOptions = {
+  origin: clientOrigin.includes(",")
+    ? clientOrigin.split(",").map((s) => s.trim())
+    : clientOrigin,
+  credentials: true,
+};
+
 // Initialize Socket.io
 const io = new Server(server, {
-  cors: {
-    origin: process.env.CLIENT_URL || "*",
-    methods: ["GET", "POST", "PUT", "DELETE"],
-    credentials: true,
-  },
+  cors: corsOptions,
 });
 
 // SGS DB Connection
 connectDB();
 
 // Middlewares
-app.use(cors({ origin: process.env.CLIENT_URL || "*", credentials: true }));
+app.use(cors(corsOptions));
 app.use(express.json({ limit: "25mb" }));
 app.use(express.urlencoded({ extended: true, limit: "25mb" }));
 

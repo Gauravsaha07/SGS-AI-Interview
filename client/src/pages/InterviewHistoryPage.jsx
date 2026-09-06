@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
+import { API_URL } from "../config/api";
 import { History, ChevronDown, ChevronUp, Trophy, Calendar, Briefcase, Award, Sparkles, MessageSquare, CheckCircle2, AlertCircle } from "lucide-react";
 
 const InterviewHistoryPage = () => {
@@ -14,7 +15,7 @@ const InterviewHistoryPage = () => {
 
   const fetchHistory = async () => {
     try {
-      const res = await axios.get("http://localhost:5511/api/interviews/history");
+      const res = await axios.get(`${API_URL}/interviews/history`);
       setHistory(res.data.history || []);
     } catch (err) {
       console.error("Fetch history error:", err);
@@ -31,7 +32,7 @@ const InterviewHistoryPage = () => {
     }
 
     try {
-      const res = await axios.get(`http://localhost:5511/api/interviews/${id}`);
+      const res = await axios.get(`${API_URL}/interviews/${id}`);
       setSelectedInterview(res.data.interview);
     } catch (err) {
       console.error("Load transcript error:", err);

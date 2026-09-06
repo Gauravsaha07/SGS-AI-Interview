@@ -3,6 +3,7 @@ import { useLocation } from "react-router-dom";
 import axios from "axios";
 import { useSocket } from "../context/SocketContext";
 import { useAuth } from "../context/AuthContext";
+import { API_URL } from "../config/api";
 import { ShoppingBag, MessageSquare, Image, Send, X, Clock, CheckCircle2, XCircle, HelpCircle, ShieldCheck, Lock, Eye } from "lucide-react";
 
 const CreditHistoryPage = () => {
@@ -26,7 +27,7 @@ const CreditHistoryPage = () => {
 
   const fetchHistory = async () => {
     try {
-      const res = await axios.get("http://localhost:5511/api/credits/history");
+      const res = await axios.get(`${API_URL}/credits/history`);
       const list = res.data.requests || [];
       setRequests(list);
 
@@ -128,7 +129,7 @@ const CreditHistoryPage = () => {
     setSending(true);
     try {
       await axios.post(
-        `http://localhost:5511/api/credits/request/${activeRequest._id}/message`,
+        `${API_URL}/credits/request/${activeRequest._id}/message`,
         { text, image }
       );
       setCandidateInputText("");

@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import axios from "axios";
+import { API_URL } from "../config/api";
 import { Sparkles, Play, AlertTriangle, Layers, Briefcase, Award, Gauge, Building2, Coins } from "lucide-react";
 
 const JOB_FIELDS = [
@@ -64,7 +65,7 @@ const InterviewSetupPage = () => {
 
     setLoading(true);
     try {
-      const res = await axios.post("http://localhost:5511/api/interviews/start", {
+      const res = await axios.post(`${API_URL}/interviews/start`, {
         jobField,
         jobTitle: jobTitle.trim(),
         experienceLevel,
