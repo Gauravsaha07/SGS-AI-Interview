@@ -126,6 +126,7 @@ export const callGeminiWithRetry = async (fn, maxAttempts = 3) => {
 
 /**
  * Generate dynamic, role-specific, difficulty-accurate interview questions
+ * with permanent candidate-level question non-repetition.
  */
 export const generateInterviewQuestions = async ({
   jobField,
@@ -134,10 +135,23 @@ export const generateInterviewQuestions = async ({
   difficulty,
   interviewType,
   qualification,
+  previousQuestionsHistory = [],
 }) => {
   const model = getGeminiModel();
 
   const sessionSeed = Math.random().toString(36).substring(7) + "_" + Date.now();
+
+  let historyInstruction = "";
+  if (Array.isArray(previousQuestionsHistory) && previousQuestionsHistory.length > 0) {
+    // Send up to the 150 most recent questions to avoid unbounded prompt growth
+    const historySubset = previousQuestionsHistory.slice(-150);
+    historyInstruction = `
+6. PERMANENT CANDIDATE QUESTION EXCLUSION LIST:
+   The candidate has ALREADY been asked the following questions in previous interview sessions.
+   You MUST NOT generate any question that is identical to or substantially duplicates the concept, topic, or wording of any question listed below:
+${historySubset.map((q, idx) => `   - Past Question ${idx + 1}: "${q}"`).join("\n")}
+`;
+  }
 
   const prompt = `
 You are an expert HR and Technical Interviewer conducting a realistic job interview.
@@ -157,6 +171,8 @@ CRITICAL RULES FOR QUESTION GENERATION:
    - For Technical / Software / Engineering roles (e.g. Full Stack Developer, Data Engineer): ask real technical concepts (e.g. scoping, async behavior, database indexing, state management, system design). Start Question 1 by asking about their primary tech stack and tools.
    - For Medical / Healthcare roles (e.g. Doctor, Nurse): ask clinical protocols, diagnostic procedures, patient management, or medical ethics.
    - For Management / Business roles: ask operational strategy, KPI tracking, conflict resolution, or resource allocation.
+   - For Agriculture roles: ask crop management, soil health, irrigation technologies, pest management, agricultural economics, or modern agritech practices.
+   - For Architecture roles: ask architectural design principles, building codes, spatial planning, structural integration, CAD/BIM software workflows, or sustainable materials.
    - For any other field: ask authentic domain questions that a real interviewer in that field would ask.
 3. DIFFICULTY ACCURACY (FROM QUESTION 1 ONWARD):
    - Easy: Core fundamental concepts and basic principles for ${jobTitle} starting right from Question 1.
@@ -165,15 +181,40 @@ CRITICAL RULES FOR QUESTION GENERATION:
 4. VARIETY ACROSS SESSIONS:
    - Use the Unique ID (${sessionSeed}) to generate fresh, unique questions. Do not generate identical questions across sessions.
 5. Minimum 8 questions required.
-
+${historyInstruction}
 Return ONLY a valid JSON array of question strings without markdown formatting, e.g.:
 ["Question 1 text...", "Question 2 text...", "Question 3 text...", "Question 4 text...", "Question 5 text...", "Question 6 text...", "Question 7 text...", "Question 8 text..."]
 `;
 
+  const normalizeForCheck = (str) =>
+    String(str || "")
+      .toLowerCase()
+      .replace(/[^a-z0-9\s]/g, "")
+      .replace(/\s+/g, " ")
+      .trim();
+
+  const isDuplicate = (qCandidate, pastNormalizedSet) => {
+    const norm = normalizeForCheck(qCandidate);
+    if (!norm) return false;
+    for (const pastNorm of pastNormalizedSet) {
+      if (norm === pastNorm) return true;
+      if (norm.length > 25 && pastNorm.length > 25) {
+        if (norm.includes(pastNorm) || pastNorm.includes(norm)) return true;
+      }
+    }
+    return false;
+  };
+
+  const historyNormalizedSet = new Set(
+    (previousQuestionsHistory || []).map(normalizeForCheck).filter(Boolean)
+  );
+
+  let questions = [];
+
   if (!model) {
-    // Realistic fallback domain questions per field if API key is unconfigured
-    return [
-      `What primary programming languages, frameworks, or domain tools do you use daily as a ${jobTitle}?`,
+    // Fallback if API key unconfigured
+    questions = [
+      `What primary tools, frameworks, or domain methodologies do you use daily as a ${jobTitle}?`,
       `How do you handle error handling, logging, and debugging in a production ${interviewType} environment for ${jobTitle}?`,
       `Describe a complex technical or operational challenge you solved as a ${experienceLevel} ${jobTitle}.`,
       `How do you ensure data integrity, security, and compliance when working in ${jobField}?`,
@@ -182,37 +223,119 @@ Return ONLY a valid JSON array of question strings without markdown formatting, 
       `How do you collaborate with cross-functional teams and handle conflicting technical requirements?`,
       `What recent trends or advancements in ${jobField} are you currently integrating into your workflow?`,
     ];
-  }
+  } else {
+    try {
+      const result = await callGeminiWithRetry(() => model.generateContent(prompt));
+      const text = result.response.text();
+      let cleanText = text.replace(/```json/gi, "").replace(/```/g, "").trim();
 
-  try {
-    const result = await callGeminiWithRetry(() => model.generateContent(prompt));
-    const text = result.response.text();
-    const cleanText = text.replace(/```json/gi, "").replace(/```/g, "").trim();
-    const questions = JSON.parse(cleanText);
-
-    if (Array.isArray(questions) && questions.length >= 8) {
-      return questions;
-    } else if (Array.isArray(questions) && questions.length > 0) {
-      while (questions.length < 8) {
-        questions.push(`Follow-up question ${questions.length + 1} regarding specialized practices in ${jobTitle}.`);
+      const firstBracket = cleanText.indexOf("[");
+      const lastBracket = cleanText.lastIndexOf("]");
+      if (firstBracket !== -1 && lastBracket !== -1 && lastBracket > firstBracket) {
+        cleanText = cleanText.substring(firstBracket, lastBracket + 1);
       }
-      return questions;
+
+      try {
+        const parsed = JSON.parse(cleanText);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          questions = parsed;
+        }
+      } catch (parseErr) {
+        console.warn("[Gemini Question Generation] Standard JSON parse failed, applying regex extraction fallback:", parseErr.message);
+        const itemMatches = [...cleanText.matchAll(/"([^"\\]*(?:\\.[^"\\]*)*)"/g)];
+        if (itemMatches && itemMatches.length >= 4) {
+          questions = itemMatches.map((m) => m[1].replace(/\\"/g, '"')).filter(Boolean);
+        }
+      }
+    } catch (error) {
+      console.error("[Gemini Question Generation] Failed:", error);
+      throw new Error(`[Gemini Question Generation] Failed: ${error.message}`);
     }
-  } catch (error) {
-    console.error("[Gemini Question Generation] Failed:", error);
-    throw new Error(`[Gemini Question Generation] Failed: ${error.message}`);
   }
 
-  return [
-    `What primary tools, frameworks, or domain methodologies do you use daily as a ${jobTitle}?`,
-    `How do you approach troubleshooting and root-cause analysis in a ${difficulty}-level ${interviewType} setting?`,
-    `Describe a major project or technical challenge you delivered as a ${experienceLevel} ${jobTitle}.`,
-    `How do you ensure safety, security, and quality compliance in ${jobField}?`,
-    `What strategies do you use for performance optimization in ${jobTitle}?`,
-    `Walk us through how you handle unexpected system failures or high-pressure situations.`,
-    `How do you evaluate tradeoffs when choosing between competing solutions in ${jobTitle}?`,
-    `Where do you see domain standards evolving in ${jobField} over the next 3 years?`,
-  ];
+  // Ensure array has at least 8 questions
+  if (Array.isArray(questions) && questions.length > 0) {
+    while (questions.length < 8) {
+      questions.push(
+        `Follow-up question ${questions.length + 1} regarding specialized practices in ${jobTitle}.`
+      );
+    }
+  }
+
+  // Safety-net check for any duplicate questions against history & current batch
+  if (Array.isArray(questions) && questions.length > 0 && model) {
+    const seenBatchNormalized = new Set();
+
+    for (let i = 0; i < questions.length; i++) {
+      let q = questions[i];
+      let dupFound =
+        isDuplicate(q, historyNormalizedSet) ||
+        isDuplicate(q, seenBatchNormalized);
+
+      if (dupFound) {
+        console.warn(
+          `[Question Duplication Check] Duplicate detected at index ${i}: "${q}". Attempting single-question regeneration retry...`
+        );
+
+        let retrySuccess = false;
+        for (let retryCount = 1; retryCount <= 2; retryCount++) {
+          try {
+            const singlePrompt = `
+Generate EXACTLY ONE fresh, unique interview question for a candidate with profile:
+- Job Field: ${jobField}
+- Job Title: ${jobTitle}
+- Experience: ${experienceLevel}
+- Difficulty: ${difficulty}
+- Qualification: ${qualification}
+
+CRITICAL: DO NOT repeat or duplicate any of the following previous questions:
+${Array.from(historyNormalizedSet).slice(-30).map((pastQ) => `- "${pastQ}"`).join("\n")}
+${Array.from(seenBatchNormalized).map((bQ) => `- "${bQ}"`).join("\n")}
+
+Return ONLY the single question text as a plain string without markdown, quotes, or array formatting.
+`;
+
+            const retryRes = await callGeminiWithRetry(() =>
+              model.generateContent(singlePrompt)
+            );
+            const rawRetryText = retryRes.response.text().trim();
+            const cleanRetryText = rawRetryText
+              .replace(/^["'\[]+|["'\]]+$/g, "")
+              .trim();
+
+            if (
+              cleanRetryText &&
+              !isDuplicate(cleanRetryText, historyNormalizedSet) &&
+              !isDuplicate(cleanRetryText, seenBatchNormalized)
+            ) {
+              questions[i] = cleanRetryText;
+              q = cleanRetryText;
+              retrySuccess = true;
+              console.log(
+                `[Question Duplication Check] Successfully regenerated unique question for index ${i}: "${cleanRetryText}"`
+              );
+              break;
+            }
+          } catch (retryErr) {
+            console.warn(
+              `[Question Duplication Check] Retry attempt ${retryCount} failed:`,
+              retryErr.message
+            );
+          }
+        }
+
+        if (!retrySuccess) {
+          console.warn(
+            `[Question Duplication Warning]: Could not produce completely unique replacement for index ${i} after 2 retries. Proceeding with best available question to ensure uninterrupted candidate experience.`
+          );
+        }
+      }
+
+      seenBatchNormalized.add(normalizeForCheck(q));
+    }
+  }
+
+  return questions;
 };
 
 /**

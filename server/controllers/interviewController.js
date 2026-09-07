@@ -40,6 +40,26 @@ export const startInterview = async (req, res) => {
         .json({ message: "Please provide all required interview settings" });
     }
 
+    // Retrieve candidate's full past question history across all past interviews (completed or in-progress)
+    const pastInterviews = await Interview.find({ user: user._id })
+      .select("questions.question")
+      .lean();
+
+    const previousQuestionsHistory = [];
+    if (pastInterviews && pastInterviews.length > 0) {
+      for (const inv of pastInterviews) {
+        if (inv.questions && Array.isArray(inv.questions)) {
+          for (const qObj of inv.questions) {
+            if (qObj && qObj.question && typeof qObj.question === "string" && qObj.question.trim()) {
+              previousQuestionsHistory.push(qObj.question.trim());
+            }
+          }
+        }
+      }
+    }
+
+    const uniquePreviousQuestions = Array.from(new Set(previousQuestionsHistory));
+
     // Call Gemini to generate dynamic, role-specific questions BEFORE deducting credit
     let questionTexts = [];
     try {
@@ -50,6 +70,7 @@ export const startInterview = async (req, res) => {
         difficulty,
         interviewType,
         qualification: user.qualification,
+        previousQuestionsHistory: uniquePreviousQuestions,
       });
     } catch (genErr) {
       console.error("[Gemini Question Generation Failure]:", genErr);

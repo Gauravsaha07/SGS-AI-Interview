@@ -14,6 +14,8 @@ const JOB_FIELDS = [
   "Marketing & Sales",
   "Finance & Banking",
   "Education & Teaching",
+  "Agriculture",
+  "Architecture",
 ];
 
 const EXPERIENCE_LEVELS = [
