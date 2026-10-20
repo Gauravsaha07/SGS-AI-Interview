@@ -8,9 +8,7 @@ const LandingPage = () => {
 
   return (
     <div className="flex flex-col min-h-screen">
-      {/* Hero Section */}
       <section className="relative py-20 md:py-32 overflow-hidden">
-        {/* Glow Effects */}
         <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-indigo-600/20 rounded-full blur-3xl pointer-events-none"></div>
         <div className="absolute top-1/3 right-10 w-72 h-72 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none"></div>
 
@@ -60,7 +58,6 @@ const LandingPage = () => {
             )}
           </div>
 
-          {/* Features Grid */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-24 text-left">
             <div className="p-8 rounded-3xl bg-slate-900/60 border border-slate-800/80 backdrop-blur-sm hover:border-indigo-500/40 transition-all group">
               <div className="w-12 h-12 rounded-2xl bg-indigo-600/20 border border-indigo-500/30 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">

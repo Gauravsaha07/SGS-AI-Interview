@@ -12,14 +12,12 @@ export const AuthProvider = ({ children }) => {
   const [credits, setCredits] = useState(0);
   const [loading, setLoading] = useState(true);
 
-  // Set default axios header
   if (token) {
     axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
   } else {
     delete axios.defaults.headers.common["Authorization"];
   }
 
-  // Fetch user profile on initial load
   useEffect(() => {
     const checkAuth = async () => {
       if (!token) {

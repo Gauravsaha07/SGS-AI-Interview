@@ -40,7 +40,6 @@ export const startInterview = async (req, res) => {
         .json({ message: "Please provide all required interview settings" });
     }
 
-    // Retrieve candidate's full past question history across all past interviews (completed or in-progress)
     const pastInterviews = await Interview.find({ user: user._id })
       .select("questions.question")
       .lean();
@@ -60,7 +59,6 @@ export const startInterview = async (req, res) => {
 
     const uniquePreviousQuestions = Array.from(new Set(previousQuestionsHistory));
 
-    // Call Gemini to generate dynamic, role-specific questions BEFORE deducting credit
     let questionTexts = [];
     try {
       questionTexts = await generateInterviewQuestions({
@@ -87,7 +85,6 @@ export const startInterview = async (req, res) => {
       });
     }
 
-    // Deduct 1 credit ONLY after question generation succeeds
     user.credits -= 1;
     await user.save();
 
@@ -163,7 +160,6 @@ export const submitAnswer = async (req, res) => {
     const targetQuestion = interview.questions[idx];
     const nextQuestionObj = interview.questions[idx + 1];
 
-    // Call Gemini to review answer & adapt next question
     const aiReviewResult = await reviewAnswer({
       jobField: interview.jobField,
       jobTitle: interview.jobTitle,
@@ -172,7 +168,6 @@ export const submitAnswer = async (req, res) => {
       nextQuestionOriginal: nextQuestionObj ? nextQuestionObj.question : "",
     });
 
-    // Save answer and review
     interview.questions[idx].candidateAnswer = answerText;
     interview.questions[idx].aiReview = {
       strengths: aiReviewResult.strengths,
@@ -183,7 +178,6 @@ export const submitAnswer = async (req, res) => {
     };
     interview.questions[idx].answeredAt = new Date();
 
-    // Adapt next question if returned by Gemini
     if (nextQuestionObj && aiReviewResult.adaptedNextQuestion) {
       interview.questions[idx + 1].question = aiReviewResult.adaptedNextQuestion;
     }
@@ -291,7 +285,6 @@ export const getInterviewById = async (req, res) => {
       resultInterview.overallFeedback = "Incomplete interview session (0/100). This session was abandoned or interrupted before completion.";
     }
 
-    // Return full questions array so active interview sessions can render Question 1, 2, ..., N
     return res.status(200).json({ interview: resultInterview });
   } catch (error) {
     console.error("Get interview error:", error);

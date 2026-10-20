@@ -62,7 +62,6 @@ const LoginPage = () => {
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div className="space-y-4">
             
-            {/* Unified Input */}
             <div>
               <label className="block text-xs font-semibold text-slate-300 mb-2">
                 Email or Mobile Number
@@ -82,7 +81,6 @@ const LoginPage = () => {
               </div>
             </div>
 
-            {/* Password Input */}
             <div>
               <label className="block text-xs font-semibold text-slate-300 mb-2">
                 Password

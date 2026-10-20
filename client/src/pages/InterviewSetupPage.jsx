@@ -79,7 +79,6 @@ const InterviewSetupPage = () => {
         updateCredits(res.data.creditsRemaining);
       }
 
-      // Navigate to interview session
       navigate(`/interview/session/${res.data.interviewId}`);
     } catch (err) {
       console.error("Start interview setup error:", err);
@@ -93,7 +92,6 @@ const InterviewSetupPage = () => {
     <div className="max-w-3xl mx-auto px-4 py-8">
       <div className="bg-slate-900/80 p-8 rounded-3xl border border-slate-800 shadow-2xl backdrop-blur-xl space-y-8">
         
-        {/* Header */}
         <div className="space-y-2 border-b border-slate-800 pb-6">
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-xs font-semibold">
             <Sparkles className="w-3.5 h-3.5" />
@@ -107,7 +105,6 @@ const InterviewSetupPage = () => {
           </p>
         </div>
 
-        {/* Insufficient credits warning banner */}
         {credits < 1 ? (
           <div className="p-4 rounded-2xl bg-rose-500/10 border border-rose-500/30 flex items-center justify-between gap-4">
             <div className="flex items-center gap-3 text-rose-300 text-xs font-semibold">
@@ -141,7 +138,6 @@ const InterviewSetupPage = () => {
 
         <form onSubmit={handleSubmit} className="space-y-6">
           
-          {/* 1. Job Field */}
           <div>
             <label className="block text-xs font-bold text-slate-200 mb-2 flex items-center gap-2">
               <Layers className="w-4 h-4 text-indigo-400" />
@@ -160,7 +156,6 @@ const InterviewSetupPage = () => {
             </select>
           </div>
 
-          {/* 2. Job Title / Role */}
           <div>
             <label className="block text-xs font-bold text-slate-200 mb-2 flex items-center gap-2">
               <Briefcase className="w-4 h-4 text-indigo-400" />
@@ -176,7 +171,6 @@ const InterviewSetupPage = () => {
             />
           </div>
 
-          {/* 3. Experience level */}
           <div>
             <label className="block text-xs font-bold text-slate-200 mb-2 flex items-center gap-2">
               <Award className="w-4 h-4 text-indigo-400" />
@@ -200,7 +194,6 @@ const InterviewSetupPage = () => {
             </div>
           </div>
 
-          {/* 4. Difficulty */}
           <div>
             <label className="block text-xs font-bold text-slate-200 mb-2 flex items-center gap-2">
               <Gauge className="w-4 h-4 text-indigo-400" />
@@ -228,7 +221,6 @@ const InterviewSetupPage = () => {
             </div>
           </div>
 
-          {/* 5. Interview Type */}
           <div>
             <label className="block text-xs font-bold text-slate-200 mb-2 flex items-center gap-2">
               <Building2 className="w-4 h-4 text-indigo-400" />
@@ -247,7 +239,6 @@ const InterviewSetupPage = () => {
             </select>
           </div>
 
-          {/* Action Button */}
           <button
             type="submit"
             disabled={loading || credits < 1}

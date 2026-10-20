@@ -90,7 +90,6 @@ const InterviewSessionPage = () => {
     setTimeout(() => {
       setIsTransitioning(false);
       if (finalSummary) {
-        // Interview finished
       } else {
         setCurrentQuestionIndex((prev) => prev + 1);
       }
@@ -121,7 +120,6 @@ const InterviewSessionPage = () => {
     );
   }
 
-  // Finished summary view
   if (finalSummary && !showReviewModal) {
     return (
       <div className="max-w-3xl mx-auto px-4 py-12">
@@ -140,7 +138,6 @@ const InterviewSessionPage = () => {
             </p>
           </div>
 
-          {/* Overall Score Badge */}
           <div className="p-6 rounded-3xl bg-slate-950/80 border border-slate-800 inline-block max-w-sm mx-auto w-full">
             <div className="text-xs uppercase tracking-widest text-slate-400 font-semibold mb-1">Overall Composite Score</div>
             <div className="text-5xl font-black bg-gradient-to-r from-amber-300 via-emerald-400 to-cyan-400 bg-clip-text text-transparent">
@@ -182,7 +179,6 @@ const InterviewSessionPage = () => {
   return (
     <div className="max-w-4xl mx-auto px-4 py-8 space-y-6">
       
-      {/* Session Progress Header */}
       <div className="flex items-center justify-between bg-slate-900/60 p-4 rounded-2xl border border-slate-800">
         <div>
           <div className="text-xs font-bold text-indigo-400 uppercase tracking-wider">
@@ -206,7 +202,6 @@ const InterviewSessionPage = () => {
         </div>
       </div>
 
-      {/* Transition Line display */}
       {isTransitioning && (
         <div className="p-6 rounded-2xl bg-indigo-600/20 border border-indigo-500/40 text-center animate-pulse space-y-2">
           <Sparkles className="w-6 h-6 text-indigo-400 mx-auto" />
@@ -216,11 +211,9 @@ const InterviewSessionPage = () => {
         </div>
       )}
 
-      {/* Main Question & Answer Card */}
       {!isTransitioning && currentQuestion && (
         <div className="bg-slate-900/80 p-8 rounded-3xl border border-slate-800 shadow-2xl backdrop-blur-xl space-y-6">
           
-          {/* Question Text */}
           <div className="space-y-3">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-xs font-bold">
               <MessageSquareQuote className="w-4 h-4 text-indigo-400" />
@@ -232,7 +225,6 @@ const InterviewSessionPage = () => {
             </h2>
           </div>
 
-          {/* Answer Form with Text & Voice Input */}
           <form onSubmit={handleSubmitAnswer} className="space-y-4">
             
             <div className="space-y-2">
@@ -274,7 +266,6 @@ const InterviewSessionPage = () => {
         </div>
       )}
 
-      {/* Per-Question AI Review Modal / Popup */}
       {showReviewModal && reviewData && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md animate-fade-in">
           <div className="max-w-2xl w-full bg-slate-900 border border-slate-800 rounded-3xl p-8 shadow-2xl space-y-6 max-h-[90vh] overflow-y-auto">
@@ -291,7 +282,6 @@ const InterviewSessionPage = () => {
 
             <div className="space-y-4 text-xs">
               
-              {/* Strengths */}
               <div className="p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 space-y-1">
                 <div className="font-bold text-emerald-400 flex items-center gap-2">
                   <Check className="w-4 h-4" />
@@ -300,7 +290,6 @@ const InterviewSessionPage = () => {
                 <p className="text-slate-300 leading-relaxed">{reviewData.strengths}</p>
               </div>
 
-              {/* Missing */}
               <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/20 space-y-1">
                 <div className="font-bold text-amber-400 flex items-center gap-2">
                   <AlertCircle className="w-4 h-4" />
@@ -309,7 +298,6 @@ const InterviewSessionPage = () => {
                 <p className="text-slate-300 leading-relaxed">{reviewData.missing}</p>
               </div>
 
-              {/* Better Answer */}
               <div className="p-4 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 space-y-1">
                 <div className="font-bold text-indigo-300 flex items-center gap-2">
                   <Lightbulb className="w-4 h-4" />

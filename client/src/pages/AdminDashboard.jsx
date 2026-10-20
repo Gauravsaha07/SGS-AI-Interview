@@ -59,7 +59,6 @@ const AdminDashboard = () => {
     setChatMessages([]);
   };
 
-  // Socket listener for real-time messages & status updates
   useEffect(() => {
     if (!socket) return;
 
@@ -135,7 +134,6 @@ const AdminDashboard = () => {
     }
   };
 
-  // Admin QR Code File Picker Upload Handler
   const handleAdminQrCodeUpload = (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
@@ -217,8 +215,7 @@ const AdminDashboard = () => {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
-      
-      {/* Header Banner */}
+
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-slate-800 pb-6">
         <div>
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-xs font-semibold mb-2">
@@ -239,10 +236,9 @@ const AdminDashboard = () => {
         </Link>
       </div>
 
-      {/* Stats Cards */}
       {stats && (
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-          
+
           <div className="bg-slate-900/80 p-5 rounded-3xl border border-slate-800 space-y-2">
             <div className="flex items-center justify-between text-slate-400 text-xs font-semibold">
               <span>Total Registered Users</span>
@@ -290,7 +286,6 @@ const AdminDashboard = () => {
         </div>
       )}
 
-      {/* Credit Requests Queue Table */}
       <div className="bg-slate-900/80 rounded-3xl border border-slate-800 overflow-hidden shadow-2xl space-y-4 p-6">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
           <h2 className="text-lg font-bold text-white">Credit Recharge Requests Queue</h2>
@@ -298,21 +293,19 @@ const AdminDashboard = () => {
           <div className="flex items-center gap-2 bg-slate-950 p-1 rounded-xl border border-slate-800 text-xs">
             <button
               onClick={() => setFilterStatus("pending")}
-              className={`px-3 py-1.5 rounded-lg font-semibold transition-all ${
-                filterStatus === "pending"
+              className={`px-3 py-1.5 rounded-lg font-semibold transition-all ${filterStatus === "pending"
                   ? "bg-amber-500/20 text-amber-300 border border-amber-500/30"
                   : "text-slate-400 hover:text-white"
-              }`}
+                }`}
             >
               Pending ({stats?.pendingCreditRequests || 0})
             </button>
             <button
               onClick={() => setFilterStatus("all")}
-              className={`px-3 py-1.5 rounded-lg font-semibold transition-all ${
-                filterStatus === "all"
+              className={`px-3 py-1.5 rounded-lg font-semibold transition-all ${filterStatus === "all"
                   ? "bg-indigo-600 text-white"
                   : "text-slate-400 hover:text-white"
-              }`}
+                }`}
             >
               All Requests
             </button>
@@ -375,7 +368,6 @@ const AdminDashboard = () => {
                       )}
                     </td>
 
-                    {/* Actions Column: Approve & Reject buttons ONLY when status is "pending" */}
                     <td className="p-3 text-right">
                       <div className="flex items-center justify-end gap-2 flex-wrap">
                         {reqItem.status === "pending" && (
@@ -426,12 +418,10 @@ const AdminDashboard = () => {
         )}
       </div>
 
-      {/* Admin Interactive Chat & Approval Modal */}
       {activeChatRequest && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md">
           <div className="max-w-2xl w-full bg-slate-900 border border-slate-800 rounded-3xl shadow-2xl flex flex-col max-h-[90vh] h-[700px] overflow-hidden">
-            
-            {/* Header (Fixed) */}
+
             <div className="p-4 bg-slate-950 border-b border-slate-800 flex items-center justify-between shrink-0">
               <div>
                 <div className="text-xs font-bold text-white flex items-center gap-2">
@@ -466,7 +456,6 @@ const AdminDashboard = () => {
               </div>
             </div>
 
-            {/* Messages Container */}
             <div
               ref={chatMessagesContainerRef}
               className="flex-1 max-h-[420px] overflow-y-auto p-4 space-y-4 bg-slate-950/40"
@@ -495,11 +484,10 @@ const AdminDashboard = () => {
                     </div>
 
                     <div
-                      className={`max-w-[80%] p-3.5 rounded-2xl text-xs space-y-2 ${
-                        isAdmin
+                      className={`max-w-[80%] p-3.5 rounded-2xl text-xs space-y-2 ${isAdmin
                           ? "bg-emerald-600 text-white rounded-br-none shadow-md"
                           : "bg-indigo-600 text-white rounded-bl-none shadow-md"
-                      }`}
+                        }`}
                     >
                       {msg.text && <p className="leading-relaxed">{msg.text}</p>}
 
@@ -517,16 +505,14 @@ const AdminDashboard = () => {
               <div ref={chatBottomRef} />
             </div>
 
-            {/* Admin Controls & Actions Footer */}
             <div className="p-4 bg-slate-950 border-t border-slate-800 space-y-3 shrink-0">
-              
+
               {activeChatRequest.isClosed ? (
                 <div className="p-3 rounded-xl bg-slate-900 border border-slate-800 text-center text-xs text-slate-400 italic">
                   This chat thread is closed.
                 </div>
               ) : (
                 <>
-                  {/* Admin File Input for QR Code Image Upload */}
                   <input
                     type="file"
                     ref={adminFileInputRef}
@@ -535,7 +521,6 @@ const AdminDashboard = () => {
                     className="hidden"
                   />
 
-                  {/* Real "Upload QR Code" File Picker Button */}
                   <div className="flex items-center gap-2">
                     <button
                       type="button"
@@ -548,7 +533,6 @@ const AdminDashboard = () => {
                     </button>
                   </div>
 
-                  {/* Reply Form */}
                   <div className="flex items-center gap-2">
                     <input
                       type="text"
@@ -568,7 +552,6 @@ const AdminDashboard = () => {
                     </button>
                   </div>
 
-                  {/* Approve / Reject Actions (Only visible when status is pending) */}
                   {activeChatRequest.status === "pending" && (
                     <div className="flex items-center gap-3 pt-2 border-t border-slate-800">
                       <button
@@ -601,7 +584,6 @@ const AdminDashboard = () => {
         </div>
       )}
 
-      {/* Candidate Interview History Inspector Modal */}
       {candidateInterviewsModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md">
           <div className="max-w-3xl w-full bg-slate-900 border border-slate-800 rounded-3xl p-8 shadow-2xl space-y-6 max-h-[85vh] overflow-y-auto">

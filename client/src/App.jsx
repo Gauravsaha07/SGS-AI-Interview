@@ -19,7 +19,6 @@ import CreditHistoryPage from "./pages/CreditHistoryPage";
 import AdminDashboard from "./pages/AdminDashboard";
 import AdminAiChatPage from "./pages/AdminAiChatPage";
 
-// Protected Candidate Route Guard
 const CandidateRoute = ({ children }) => {
   const { user, loading } = useAuth();
   if (loading) return null;
@@ -28,7 +27,6 @@ const CandidateRoute = ({ children }) => {
   return children;
 };
 
-// Protected Admin Route Guard
 const AdminRoute = ({ children }) => {
   const { user, loading } = useAuth();
   if (loading) return null;
@@ -56,12 +54,10 @@ const App = () => {
       <Navbar />
       <main className="flex-1">
         <Routes>
-          {/* Public Routes */}
           <Route path="/" element={<LandingPage />} />
           <Route path="/login" element={<LoginPage />} />
           <Route path="/register" element={<RegisterPage />} />
 
-          {/* Candidate Routes */}
           <Route
             path="/dashboard"
             element={
@@ -111,7 +107,6 @@ const App = () => {
             }
           />
 
-          {/* Admin Routes */}
           <Route
             path="/admin/dashboard"
             element={
@@ -129,7 +124,6 @@ const App = () => {
             }
           />
 
-          {/* Fallback */}
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </main>

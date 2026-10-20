@@ -65,7 +65,6 @@ const CreditHistoryPage = () => {
     setCandidateInputText("");
   };
 
-  // Socket listeners for real-time chat & status update
   useEffect(() => {
     if (!socket) return;
 
@@ -114,7 +113,6 @@ const CreditHistoryPage = () => {
     }
   }, [chatMessages, activeRequest]);
 
-  // Turn-based check for candidate input lock
   const lastNonSystemMessage = chatMessages
     .slice()
     .reverse()
@@ -122,7 +120,6 @@ const CreditHistoryPage = () => {
 
   const isWaitingForAdmin = lastNonSystemMessage?.senderType === "candidate";
 
-  // Candidate message sending (free-text or image or action button)
   const sendCandidateMessage = async ({ text, image }) => {
     if (!activeRequest || sending || isWaitingForAdmin || activeRequest.isClosed) return;
 
@@ -237,7 +234,6 @@ const CreditHistoryPage = () => {
                         )}
                       </td>
 
-                      {/* ISSUE 2 Fix: Clickable button for both active and resolved/closed requests */}
                       <td className="p-4 text-right">
                         {reqItem.isClosed ? (
                           <button
@@ -266,12 +262,10 @@ const CreditHistoryPage = () => {
         </div>
       )}
 
-      {/* Candidate Support Chat Modal */}
       {activeRequest && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md">
           <div className="max-w-xl w-full bg-slate-900 border border-slate-800 rounded-3xl shadow-2xl flex flex-col max-h-[90vh] h-[680px] overflow-hidden">
             
-            {/* Chat Modal Header */}
             <div className="p-4 bg-slate-950 border-b border-slate-800 flex items-center justify-between shrink-0">
               <div>
                 <div className="text-xs font-bold text-white flex items-center gap-2">
@@ -290,7 +284,6 @@ const CreditHistoryPage = () => {
               </button>
             </div>
 
-            {/* Read-Only Status Banner if Closed */}
             {activeRequest.isClosed && (
               <div className="p-3 bg-slate-950/90 border-b border-slate-800 text-center text-xs space-y-0.5 shrink-0">
                 <div className="font-bold text-slate-200">
@@ -300,7 +293,6 @@ const CreditHistoryPage = () => {
               </div>
             )}
 
-            {/* Messages Container */}
             <div
               ref={chatMessagesContainerRef}
               className="flex-1 max-h-[380px] overflow-y-auto p-4 space-y-4 bg-slate-950/40"
@@ -351,7 +343,6 @@ const CreditHistoryPage = () => {
               <div ref={chatBottomRef} />
             </div>
 
-            {/* CANDIDATE INPUT & ACTIONS FOOTER */}
             <div className="p-4 bg-slate-950 border-t border-slate-800 space-y-3 shrink-0">
               
               {activeRequest.isClosed ? (
@@ -365,7 +356,6 @@ const CreditHistoryPage = () => {
                 </div>
               ) : (
                 <>
-                  {/* ISSUE 1 Fix: Free-Form Candidate Text Input + Send Button */}
                   <form onSubmit={handleSendTextForm} className="flex items-center gap-2">
                     <input
                       type="text"
@@ -385,7 +375,6 @@ const CreditHistoryPage = () => {
                     </button>
                   </form>
 
-                  {/* Constrained Action Buttons & Image Upload */}
                   <div className="pt-2 border-t border-slate-800/80 space-y-2">
                     <input
                       type="file"

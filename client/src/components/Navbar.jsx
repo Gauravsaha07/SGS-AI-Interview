@@ -20,7 +20,6 @@ const Navbar = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           
-          {/* Brand Logo */}
           <Link to="/" className="flex items-center gap-2 group">
             <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 via-indigo-500 to-cyan-400 flex items-center justify-center shadow-lg shadow-indigo-500/25 group-hover:scale-105 transition-transform duration-200">
               <Sparkles className="w-5 h-5 text-white" />
@@ -35,11 +34,9 @@ const Navbar = () => {
             </div>
           </Link>
 
-          {/* Navigation Links & User Actions */}
           {user ? (
             <div className="flex items-center gap-4">
               
-              {/* Candidate Nav Links */}
               {user.userType === "candidate" && (
                 <div className="hidden md:flex items-center gap-1 bg-slate-950/60 p-1 rounded-xl border border-slate-800">
                   <Link
@@ -92,7 +89,6 @@ const Navbar = () => {
                 </div>
               )}
 
-              {/* Admin Nav Links */}
               {user.userType === "admin" && (
                 <div className="hidden md:flex items-center gap-1 bg-slate-950/60 p-1 rounded-xl border border-slate-800">
                   <Link
@@ -121,7 +117,6 @@ const Navbar = () => {
                 </div>
               )}
 
-              {/* Credit Balance Counter (Candidates only) */}
               {user.userType === "candidate" && (
                 <Link
                   to="/buy-credits"
@@ -133,7 +128,6 @@ const Navbar = () => {
                 </Link>
               )}
 
-              {/* User Profile Badge & Logout */}
               <div className="flex items-center gap-3 pl-2 border-l border-slate-800">
                 <div className="text-right hidden sm:block">
                   <div className="text-xs font-semibold text-slate-200">{user.name}</div>

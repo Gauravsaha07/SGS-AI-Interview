@@ -17,7 +17,6 @@ const PORT = process.env.PORT || 5511;
 const app = express();
 const server = http.createServer(app);
 
-// CORS Configuration
 const clientOrigin = process.env.CLIENT_URL || "http://localhost:5173";
 const corsOptions = {
   origin: clientOrigin.includes(",")
@@ -26,26 +25,21 @@ const corsOptions = {
   credentials: true,
 };
 
-// Initialize Socket.io
 const io = new Server(server, {
   cors: corsOptions,
 });
 
-// SGS DB Connection
 connectDB();
 
-// Middlewares
 app.use(cors(corsOptions));
 app.use(express.json({ limit: "25mb" }));
 app.use(express.urlencoded({ extended: true, limit: "25mb" }));
 
-// Attach Socket.io instance to request
 app.use((req, res, next) => {
   req.io = io;
   next();
 });
 
-// API Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/interviews", interviewRoutes);
 app.use("/api/credits", creditRoutes);
@@ -59,7 +53,6 @@ app.get("/", (req, res) => {
   });
 });
 
-// Real-time Socket.io handlers
 io.on("connection", (socket) => {
   console.log(`Socket Connected: ${socket.id}`.cyan);
 

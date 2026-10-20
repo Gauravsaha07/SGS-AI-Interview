@@ -1,7 +1,6 @@
 import CreditRequest from "../model/CreditRequest.js";
 import User from "../model/User.js";
 
-// Fixed Credit Packages configuration
 export const CREDIT_PACKAGES = [
   { id: "pkg_1", packageSelected: "1 Credit", creditsRequested: 1, amount: 99 },
   { id: "pkg_3", packageSelected: "3 Credits", creditsRequested: 3, amount: 249 },
@@ -94,7 +93,6 @@ export const getCreditRequestById = async (req, res) => {
       return res.status(404).json({ message: "Credit request not found" });
     }
 
-    // Verify access
     if (
       req.user.userType !== "admin" &&
       creditRequest.user._id.toString() !== req.user._id.toString()
@@ -133,7 +131,6 @@ export const sendCandidateMessage = async (req, res) => {
       return res.status(400).json({ message: "This chat room is closed." });
     }
 
-    // Turn-based check: candidate can only send 1 message at a time, then must wait for admin reply
     const lastMsg = creditRequest.chatMessages
       .slice()
       .reverse()
@@ -160,7 +157,6 @@ export const sendCandidateMessage = async (req, res) => {
     creditRequest.chatMessages.push(messageObj);
     await creditRequest.save();
 
-    // Emit Socket.io event if io instance is attached
     if (req.io) {
       req.io.to(`credit_request_${id}`).emit("new_chat_message", {
         requestId: id,

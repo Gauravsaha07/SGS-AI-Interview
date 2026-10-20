@@ -2,14 +2,12 @@ import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 import User from "../model/User.js";
 
-// Helper to generate JWT
 const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET || "sgs_ai_interview_secret_jwt_key_2026", {
     expiresIn: "30d",
   });
 };
 
-// Email & Phone regex
 const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 const phoneRegex = /^\d{10}$/;
 
@@ -29,7 +27,6 @@ export const registerUser = async (req, res) => {
     const cleanEmail = email.trim().toLowerCase();
     const cleanPhone = phone.trim();
 
-    // Validations
     if (!emailRegex.test(cleanEmail)) {
       return res.status(400).json({ message: "Invalid email format" });
     }
@@ -38,7 +35,6 @@ export const registerUser = async (req, res) => {
       return res.status(400).json({ message: "Phone number must be exactly 10 digits" });
     }
 
-    // Check existing email or phone
     const existingUser = await User.findOne({
       $or: [{ email: cleanEmail }, { phone: cleanPhone }],
     });
@@ -47,11 +43,9 @@ export const registerUser = async (req, res) => {
       return res.status(400).json({ message: "User already exists" });
     }
 
-    // Hash password
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(password, salt);
 
-    // Create user (userType ALWAYS candidate, credits default 5)
     const user = await User.create({
       name,
       email: cleanEmail,
@@ -108,7 +102,6 @@ export const loginUser = async (req, res) => {
     } else if (phoneRegex.test(cleanInput)) {
       query = { phone: cleanInput };
     } else {
-      // Could be email without @ or non-10-digit number -> query both or check existence
       query = { $or: [{ email: cleanInput.toLowerCase() }, { phone: cleanInput }] };
     }
 

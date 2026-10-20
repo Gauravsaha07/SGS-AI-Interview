@@ -46,7 +46,6 @@ const BuyCreditsPage = () => {
   return (
     <div className="max-w-6xl mx-auto px-4 py-8 space-y-8">
       
-      {/* Header */}
       <div className="text-center max-w-2xl mx-auto space-y-3">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-amber-500/10 border border-amber-500/20 text-amber-300 text-xs font-semibold">
           <Coins className="w-4 h-4 text-amber-400" />
@@ -130,7 +129,6 @@ const BuyCreditsPage = () => {
         </div>
       )}
 
-      {/* Confirmation Modal */}
       {successModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-950/80 backdrop-blur-md">
           <div className="max-w-md w-full bg-slate-900 border border-slate-800 rounded-3xl p-8 shadow-2xl text-center space-y-6">

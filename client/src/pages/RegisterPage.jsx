@@ -27,7 +27,6 @@ const RegisterPage = () => {
     e.preventDefault();
     setError("");
 
-    // Validations
     if (!formData.email.includes("@") || !formData.email.includes(".")) {
       setError("Please enter a valid email address");
       return;
@@ -75,7 +74,6 @@ const RegisterPage = () => {
 
         <form className="space-y-4" onSubmit={handleSubmit}>
           
-          {/* Full Name */}
           <div>
             <label className="block text-xs font-semibold text-slate-300 mb-1">
               Full Name
@@ -97,7 +95,6 @@ const RegisterPage = () => {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {/* Email */}
             <div>
               <label className="block text-xs font-semibold text-slate-300 mb-1">
                 Email Address
@@ -118,7 +115,6 @@ const RegisterPage = () => {
               </div>
             </div>
 
-            {/* Phone */}
             <div>
               <label className="block text-xs font-semibold text-slate-300 mb-1">
                 Phone (10 Digits)
@@ -141,7 +137,6 @@ const RegisterPage = () => {
             </div>
           </div>
 
-          {/* Password */}
           <div>
             <label className="block text-xs font-semibold text-slate-300 mb-1">
               Password
@@ -163,7 +158,6 @@ const RegisterPage = () => {
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {/* Location */}
             <div>
               <label className="block text-xs font-semibold text-slate-300 mb-1">
                 Location / City
@@ -184,7 +178,6 @@ const RegisterPage = () => {
               </div>
             </div>
 
-            {/* Qualification */}
             <div>
               <label className="block text-xs font-semibold text-slate-300 mb-1">
                 Highest Qualification

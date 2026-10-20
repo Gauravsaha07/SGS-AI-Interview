@@ -7,16 +7,9 @@ const getGeminiModel = () => {
     return null;
   }
   const genAI = new GoogleGenerativeAI(apiKey);
-  // Always use Google's fast, low-latency Flash-Lite model alias
   return genAI.getGenerativeModel({ model: "gemini-flash-lite-latest" });
 };
 
-/**
- * Helper to determine if a Gemini API error is transient/retryable.
- * Retryable: HTTP 503 (Service Unavailable), HTTP 429 (Rate Limit / High Demand),
- * 500, 502, 504, and network timeouts / socket / connection errors.
- * Non-retryable: HTTP 404 (Model Not Found), 401/403 (Auth/Key error), 400 (Bad Request).
- */
 const isTransientError = (error) => {
   if (!error) return false;
 
@@ -26,12 +19,10 @@ const isTransientError = (error) => {
     error.response?.status ||
     error.statusDetails?.code;
 
-  // Non-retryable status codes: 400, 401, 403, 404
   if (status === 400 || status === 401 || status === 403 || status === 404) {
     return false;
   }
 
-  // Retryable status codes: 503, 429, 500, 502, 504
   if (
     status === 503 ||
     status === 429 ||
@@ -44,7 +35,6 @@ const isTransientError = (error) => {
 
   const message = String(error.message || "").toLowerCase();
 
-  // Check for non-transient keywords in error message
   if (
     message.includes("404") ||
     message.includes("401") ||
@@ -59,7 +49,6 @@ const isTransientError = (error) => {
     return false;
   }
 
-  // Check for transient keywords in error message
   if (
     message.includes("503") ||
     message.includes("429") ||
@@ -85,15 +74,8 @@ const isTransientError = (error) => {
   return false;
 };
 
-/**
- * Wraps any Gemini API call with exponential backoff retry logic.
- * Retries up to 3 total attempts for transient errors (503, 429, network timeouts).
- * Attempt 1: immediate
- * Attempt 2: after 1000ms
- * Attempt 3: after 2000ms
- */
 export const callGeminiWithRetry = async (fn, maxAttempts = 3) => {
-  const delays = [1000, 2000]; // Delays before attempt 2 and 3
+  const delays = [1000, 2000];
 
   for (let attempt = 1; attempt <= maxAttempts; attempt++) {
     try {
@@ -124,10 +106,6 @@ export const callGeminiWithRetry = async (fn, maxAttempts = 3) => {
   }
 };
 
-/**
- * Generate dynamic, role-specific, difficulty-accurate interview questions
- * with permanent candidate-level question non-repetition.
- */
 export const generateInterviewQuestions = async ({
   jobField,
   jobTitle,
@@ -143,7 +121,6 @@ export const generateInterviewQuestions = async ({
 
   let historyInstruction = "";
   if (Array.isArray(previousQuestionsHistory) && previousQuestionsHistory.length > 0) {
-    // Send up to the 150 most recent questions to avoid unbounded prompt growth
     const historySubset = previousQuestionsHistory.slice(-150);
     historyInstruction = `
 6. PERMANENT CANDIDATE QUESTION EXCLUSION LIST:
@@ -212,7 +189,6 @@ Return ONLY a valid JSON array of question strings without markdown formatting, 
   let questions = [];
 
   if (!model) {
-    // Fallback if API key unconfigured
     questions = [
       `What primary tools, frameworks, or domain methodologies do you use daily as a ${jobTitle}?`,
       `How do you handle error handling, logging, and debugging in a production ${interviewType} environment for ${jobTitle}?`,
@@ -253,7 +229,6 @@ Return ONLY a valid JSON array of question strings without markdown formatting, 
     }
   }
 
-  // Ensure array has at least 8 questions
   if (Array.isArray(questions) && questions.length > 0) {
     while (questions.length < 8) {
       questions.push(
@@ -262,7 +237,6 @@ Return ONLY a valid JSON array of question strings without markdown formatting, 
     }
   }
 
-  // Safety-net check for any duplicate questions against history & current batch
   if (Array.isArray(questions) && questions.length > 0 && model) {
     const seenBatchNormalized = new Set();
 
@@ -338,9 +312,6 @@ Return ONLY the single question text as a plain string without markdown, quotes,
   return questions;
 };
 
-/**
- * Review candidate answer to a single question
- */
 export const reviewAnswer = async ({
   jobField,
   jobTitle,
@@ -418,9 +389,6 @@ Return ONLY a valid JSON object with this exact structure:
   }
 };
 
-/**
- * Calculate final overall composite score and summary feedback
- */
 export const calculateCompositeScore = async (questions) => {
   const answeredQuestions = questions.filter(
     (q) => q.candidateAnswer && q.candidateAnswer.trim() !== ""
@@ -448,9 +416,6 @@ export const calculateCompositeScore = async (questions) => {
   };
 };
 
-/**
- * Admin AI Assistant real conversational agent with live DB context
- */
 export const askAdminAssistant = async ({ prompt, liveStats }) => {
   const model = getGeminiModel();
 

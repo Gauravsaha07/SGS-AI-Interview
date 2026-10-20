@@ -30,7 +30,6 @@ const CandidateDashboard = () => {
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
       
-      {/* Welcome Banner */}
       <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-indigo-900/60 via-slate-900 to-slate-900 border border-slate-800 p-8 shadow-2xl">
         <div className="absolute top-0 right-0 w-96 h-96 bg-indigo-500/10 rounded-full blur-3xl pointer-events-none"></div>
 
@@ -48,7 +47,6 @@ const CandidateDashboard = () => {
             </p>
           </div>
 
-          {/* Credit balance card */}
           <div className="flex items-center gap-4 bg-slate-950/80 p-4 rounded-2xl border border-slate-800 shadow-inner shrink-0">
             <div className="w-12 h-12 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center justify-center">
               <Coins className="w-6 h-6 text-amber-400" />
@@ -75,7 +73,6 @@ const CandidateDashboard = () => {
         </div>
       </div>
 
-      {/* Main Status Box */}
       {loading ? (
         <div className="p-12 text-center rounded-3xl bg-slate-900/40 border border-slate-800 text-slate-400 text-sm animate-pulse">
           Loading your dashboard statistics...
@@ -103,7 +100,6 @@ const CandidateDashboard = () => {
         <div className="space-y-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             
-            {/* Stats Card */}
             <div className="p-6 rounded-3xl bg-slate-900/60 border border-slate-800 flex items-center justify-between">
               <div className="space-y-1">
                 <div className="text-xs font-semibold text-slate-400 uppercase tracking-wider">Total Sessions</div>
@@ -127,7 +123,6 @@ const CandidateDashboard = () => {
               </div>
             </div>
 
-            {/* Quick Action Card */}
             <div className="p-6 rounded-3xl bg-gradient-to-br from-indigo-950/40 to-slate-900 border border-indigo-500/20 flex items-center justify-between">
               <div>
                 <h4 className="text-base font-bold text-white mb-1">Top Up Practice Credits</h4>
@@ -151,7 +146,6 @@ const CandidateDashboard = () => {
 
           </div>
 
-          {/* Recent History Table */}
           {recentInterviews.length > 0 && (
             <div className="bg-slate-900/60 border border-slate-800 rounded-3xl p-6 space-y-4">
               <div className="flex items-center justify-between">

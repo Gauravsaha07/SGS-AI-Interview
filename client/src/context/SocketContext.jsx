@@ -26,7 +26,6 @@ export const SocketProvider = ({ children }) => {
       }
     });
 
-    // Listen for global real-time credit update push
     newSocket.on("credits_updated", (data) => {
       if (typeof data.credits === "number") {
         updateCredits(data.credits);

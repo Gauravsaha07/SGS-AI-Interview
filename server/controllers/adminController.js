@@ -23,7 +23,6 @@ export const getAdminStats = async (req, res) => {
     const approvedCreditRequests = await CreditRequest.countDocuments({ status: "approved" });
     const rejectedCreditRequests = await CreditRequest.countDocuments({ status: "rejected" });
 
-    // Aggregate total credits requested in approved requests
     const approvedRequestsDocs = await CreditRequest.find({ status: "approved" });
     const totalCreditsDistributed = approvedRequestsDocs.reduce((acc, curr) => acc + (curr.creditsRequested || 0), 0);
 
@@ -95,7 +94,6 @@ export const updateCreditRequestStatus = async (req, res) => {
 
     creditRequest.status = status;
 
-    // Chat ONLY auto-closes on Approved. On Rejected, it STAYS OPEN.
     if (status === "approved") {
       creditRequest.isClosed = true;
     }
@@ -103,13 +101,11 @@ export const updateCreditRequestStatus = async (req, res) => {
     let updatedCredits = creditRequest.user.credits;
 
     if (status === "approved") {
-      // Add credits immediately to user model
       const candidateUser = await User.findById(creditRequest.user._id);
       candidateUser.credits += creditRequest.creditsRequested;
       await candidateUser.save();
       updatedCredits = candidateUser.credits;
 
-      // Add approval message to chat
       creditRequest.chatMessages.push({
         sender: req.user._id,
         senderType: "admin",
@@ -119,7 +115,6 @@ export const updateCreditRequestStatus = async (req, res) => {
         createdAt: new Date(),
       });
     } else {
-      // Rejection message (chat stays open!)
       creditRequest.chatMessages.push({
         sender: req.user._id,
         senderType: "admin",
@@ -132,7 +127,6 @@ export const updateCreditRequestStatus = async (req, res) => {
 
     await creditRequest.save();
 
-    // Socket.io Real-time Push
     if (req.io) {
       req.io.to(`credit_request_${id}`).emit("credit_status_updated", {
         requestId: id,
@@ -143,7 +137,6 @@ export const updateCreditRequestStatus = async (req, res) => {
         message: creditRequest.chatMessages[creditRequest.chatMessages.length - 1],
       });
 
-      // Also emit directly to candidate's user room
       req.io.to(`user_${creditRequest.user._id}`).emit("credits_updated", {
         credits: updatedCredits,
         message: `Your credit request of ${creditRequest.creditsRequested} credits was ${status}.`,

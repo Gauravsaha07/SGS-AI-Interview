@@ -53,7 +53,6 @@ const AdminAiChatPage = () => {
   return (
     <div className="max-w-4xl mx-auto px-4 py-8 space-y-6">
       
-      {/* Header */}
       <div className="flex items-center justify-between border-b border-slate-800 pb-4">
         <div className="flex items-center gap-3">
           <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-emerald-600 to-cyan-500 flex items-center justify-center shadow-lg shadow-emerald-500/25">
@@ -73,7 +72,6 @@ const AdminAiChatPage = () => {
         </div>
       </div>
 
-      {/* Main Chat Box */}
       <div className="bg-slate-900/80 rounded-3xl border border-slate-800 shadow-2xl overflow-hidden flex flex-col h-[550px]">
         
         <div className="flex-1 p-6 overflow-y-auto space-y-4 bg-slate-950/40">
@@ -120,7 +118,6 @@ const AdminAiChatPage = () => {
           <div ref={chatBottomRef} />
         </div>
 
-        {/* Input Form */}
         <form onSubmit={handleSendPrompt} className="p-4 bg-slate-950 border-t border-slate-800 flex items-center gap-3">
           <input
             type="text"

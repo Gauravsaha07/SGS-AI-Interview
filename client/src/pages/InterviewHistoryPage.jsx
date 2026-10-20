@@ -42,7 +42,6 @@ const InterviewHistoryPage = () => {
   return (
     <div className="max-w-6xl mx-auto px-4 py-8 space-y-8">
       
-      {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 border-b border-slate-800 pb-6">
         <div>
           <div className="inline-flex items-center gap-2 px-3 py-1 rounded-lg bg-indigo-500/10 border border-indigo-500/20 text-indigo-300 text-xs font-semibold mb-2">
@@ -81,7 +80,6 @@ const InterviewHistoryPage = () => {
                 className="bg-slate-900/80 rounded-3xl border border-slate-800/80 overflow-hidden transition-all shadow-xl"
               >
                 
-                {/* Header Row */}
                 <button
                   onClick={() => loadTranscript(item._id)}
                   className="w-full p-6 text-left flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 hover:bg-slate-800/40 transition-colors"
@@ -129,11 +127,9 @@ const InterviewHistoryPage = () => {
                   </div>
                 </button>
 
-                {/* Expanded Full Word-for-Word Transcript */}
                 {isExpanded && selectedInterview && (
                   <div className="p-6 border-t border-slate-800 bg-slate-950/60 space-y-6">
                     
-                    {/* Top Overall Score Banner */}
                     <div className="p-4 rounded-2xl bg-indigo-500/10 border border-indigo-500/20 flex flex-col sm:flex-row items-center justify-between gap-4">
                       <div>
                         <div className="text-xs font-bold text-indigo-300 uppercase tracking-wider flex items-center gap-2">
@@ -153,7 +149,6 @@ const InterviewHistoryPage = () => {
                       </div>
                     </div>
 
-                    {/* Word-for-Word Transcript Format (ONLY Asked & Answered Questions) */}
                     {selectedInterview.questions.length === 0 ? (
                       <div className="p-6 text-center text-slate-400 text-xs italic bg-slate-900 rounded-2xl border border-slate-800">
                         No questions were answered during this session.
@@ -166,7 +161,6 @@ const InterviewHistoryPage = () => {
                           return (
                             <div key={idx} className="p-6 rounded-2xl bg-slate-900 border border-slate-800 space-y-4">
                               
-                              {/* AI Generated Question XX */}
                               <div className="space-y-1">
                                 <div className="text-indigo-400 font-bold uppercase tracking-wider">
                                   AI Generated Question {num}:
@@ -176,7 +170,6 @@ const InterviewHistoryPage = () => {
                                 </div>
                               </div>
 
-                              {/* Candidate Answer XX */}
                               <div className="space-y-1">
                                 <div className="text-cyan-400 font-bold uppercase tracking-wider">
                                   Candidate Answer {num}:
@@ -186,7 +179,6 @@ const InterviewHistoryPage = () => {
                                 </div>
                               </div>
 
-                              {/* AI Review on Candidate Answer XX */}
                               <div className="space-y-2">
                                 <div className="text-amber-400 font-bold uppercase tracking-wider">
                                   AI Review on Candidate Answer {num}:

@@ -2,7 +2,6 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Smooth scrolling and scrollbar customization using utilities */
 html {
   scroll-behavior: smooth;
 }
